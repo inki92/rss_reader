@@ -4,9 +4,10 @@ import argparse
 # Name of application
 app_name = 'RSS READER'
 # Version of application
-app_version = '0.01'
+app_version = '0.02'
 # CHANGELOG
 # 19.08.22 v.0.01 Add doc strings. Create start function.
+# 19.08.22 v.0.02 Add error_source method of rss_feed class. Add requirements.txt.
 
 class cmd_parser:
     """
@@ -24,7 +25,8 @@ class cmd_parser:
 
         parser = argparse.ArgumentParser(prog = str(app_name))
 
-        parser.add_argument('-v', '--version', action='version', version = str(app_name + ' v.' + app_version),
+        parser.add_argument('-v', '--version', action='version',
+                    version = str(app_name + ' v.' + app_version),
                     help="Print version info")
         parser.add_argument('--json', action='store_true',
                     help="Print result as JSON in stdout")
@@ -121,18 +123,27 @@ class rss_feed:
         """
         print("   ")
 
+    def error_source(self):
+        """
+        Method for print user visible message about source error
+        """
+        print("Error reading RSS feed. Check the source.")
+
     def print_info(self):
         """
         Method for print all(or some number with limit)
         news from rss feed
         """
         feed = self.parce()
-        for item in feed.entries[:self.limit]:
-            self.news_source(item)
-            self.news_title(item)
-            self.news_date(item)
-            self.news_link(item)
-            self.space()
+        if len(feed.entries) > 0:
+            for item in feed.entries[:self.limit]:
+                self.news_source(item)
+                self.news_title(item)
+                self.news_date(item)
+                self.news_link(item)
+                self.space()
+        else:
+            self.error_source()
 
     def print_json(self):
         """
@@ -140,7 +151,10 @@ class rss_feed:
         news from rss feed in json format
         """
         feed = self.parce()
-        print(feed.entries[:self.limit])
+        if len(feed.entries) > 0:
+            print(feed.entries[:self.limit])
+        else:
+            self.error_source()
 
 def start():
     """
@@ -156,3 +170,7 @@ def start():
 
 if __name__ == '__main__':
     start()
+
+
+
+

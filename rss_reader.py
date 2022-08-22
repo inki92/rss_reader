@@ -12,6 +12,7 @@ app_version = '0.02'
 # 19.08.22 v.0.02 Add error_source method of rss_feed class. Add requirements.txt.
 # 22.08.22 v.0.03 fix: Add None value bypass for source method value in cmd_parser.
 #                 Add error_msg method. Add exceptions for absence keys.
+#          v.0.04 fix: Add special statuses.
 
 class cmd_parser:
     """
@@ -103,15 +104,18 @@ class rss_feed:
         """
         Methode for print error message about absence key in feed
         """
-        print("RSS READER: error: the following key absence in RSS feed: ", name)
-
+        message = "RSS READER: error: the following key absence in RSS feed: " + name
+        print(message)
+        status = 'pass'
+        return status
 
     def news_source(self, item):
         """
         Method for print source of news from rss feed
         """
         try:
-            print("Source: ", item.source.title)
+            message = "Source: " + item.source.title
+            print(message)
         except:
             self.error_msg('source')
 
@@ -120,7 +124,8 @@ class rss_feed:
         Method for print title of news from rss feed
         """
         try:
-            print("Title: ", item.title)
+            message = "Title: " + item.title
+            print(message)
         except:
             self.error_msg('title')
 
@@ -129,7 +134,8 @@ class rss_feed:
         Method for print publish date of news from rss feed
         """
         try:
-            print("Date: ", item.published)
+            message = "Date: " + item.published
+            print(message)
         except:
             self.error_msg('date')
 
@@ -138,7 +144,8 @@ class rss_feed:
         Method for print link to news from rss feed
         """
         try:
-            print("Link:", item.link)
+            message = "Link:" + item.link
+            print(message)
         except:
             self.error_msg('link')
 
@@ -146,13 +153,19 @@ class rss_feed:
         """
         Method for print space
         """
-        print("   ")
+        message = "   "
+        print(message)
+        status = 'pass'
+        return status
 
     def error_source(self):
         """
         Method for print user visible message about source error
         """
-        print("RSS READER: error: reading RSS feed. Check the source.")
+        message = "RSS READER: error: reading RSS feed. Check the source."
+        print(message)
+        status = 'pass'
+        return status
 
     def print_info(self):
         """
@@ -169,6 +182,8 @@ class rss_feed:
                 self.space()
         else:
             self.error_source()
+        status = 'pass'
+        return status
 
     def print_json(self):
         """
@@ -180,6 +195,8 @@ class rss_feed:
             print(feed.entries[:self.limit])
         else:
             self.error_source()
+        status = 'pass'
+        return status
 
 
 def start():

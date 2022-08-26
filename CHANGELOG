@@ -1,0 +1,8 @@
+CHANGELOG
+19.08.22 v.0.01 Add doc strings. Create start function.
+19.08.22 v.0.02 Add error_source method of rss_feed class. Add requirements.txt.
+22.08.22 v.0.03 fix: Add None value bypass for source method value in cmd_parser.
+                 Add error_msg method. Add exceptions for absence keys.
+         v.0.04 fix: Add special statuses.
+26.05.22 v.0.05 feat: Restruct app to python package.
+                doc: Add CHANGELOG and README.md

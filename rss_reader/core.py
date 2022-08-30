@@ -4,7 +4,7 @@ import argparse
 # Name of application
 app_name = 'RSS READER'
 # Version of application
-app_version = '0.05'
+app_version = '0.06'
 
 class CmdParser:
     """
@@ -92,16 +92,19 @@ class RssFeed:
         """
         return feedparser.parse(self.s_link)
 
-    def error_msg(self, name):
+    def error_msg(self, name, verbose):
         """
         Methode for print error message about absence key in feed
         """
-        message = "RSS READER: error: the following key absence in RSS feed: " + name
-        print(message)
+        if verbose:
+            message = "RSS READER: error: the following key absence in RSS feed: " + name
+            print(message)
+        else:
+            pass
         status = 'pass'
         return status
 
-    def news_source(self, item):
+    def news_source(self, item, verbose):
         """
         Method for print source of news from rss feed
         """
@@ -109,9 +112,9 @@ class RssFeed:
             message = "Source: " + item.source.title
             print(message)
         except:
-            self.error_msg('source')
+            self.error_msg('source', verbose)
 
-    def news_title(self, item):
+    def news_title(self, item, verbose):
         """
         Method for print title of news from rss feed
         """
@@ -119,9 +122,9 @@ class RssFeed:
             message = "Title: " + item.title
             print(message)
         except:
-            self.error_msg('title')
+            self.error_msg('title', verbose)
 
-    def news_date(self, item):
+    def news_date(self, item, verbose):
         """
         Method for print publish date of news from rss feed
         """
@@ -129,9 +132,9 @@ class RssFeed:
             message = "Date: " + item.published
             print(message)
         except:
-            self.error_msg('date')
+            self.error_msg('date', verbose)
 
-    def news_link(self, item):
+    def news_link(self, item, verbose):
         """
         Method for print link to news from rss feed
         """
@@ -139,7 +142,7 @@ class RssFeed:
             message = "Link:" + item.link
             print(message)
         except:
-            self.error_msg('link')
+            self.error_msg('link', verbose)
 
     def space(self):
         """
@@ -159,7 +162,7 @@ class RssFeed:
         status = 'pass'
         return status
 
-    def print_info(self):
+    def print_info(self, verbose):
         """
         Method for print all(or some number with limit)
         news from rss feed
@@ -167,10 +170,10 @@ class RssFeed:
         feed = self.parce()
         if len(feed.entries) > 0:
             for item in feed.entries[:self.limit]:
-                self.news_source(item)
-                self.news_title(item)
-                self.news_date(item)
-                self.news_link(item)
+                self.news_source(item, verbose)
+                self.news_title(item, verbose)
+                self.news_date(item, verbose)
+                self.news_link(item, verbose)
                 self.space()
         else:
             self.error_source()
@@ -199,6 +202,11 @@ def start():
     cmd_args = CmdParser()
     news = RssFeed(cmd_args.source(), cmd_args.limit())
     if cmd_args.json() != True:
-        news.print_info()
+        if cmd_args.verbose() == True:
+            verbose = True
+            news.print_info(verbose)
+        else:
+            verbose = False
+            news.print_info(verbose)
     else:
         news.print_json()

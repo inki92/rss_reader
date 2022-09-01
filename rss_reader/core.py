@@ -1,10 +1,11 @@
 import feedparser
 import argparse
+import configparser
 
 # Name of application
 app_name = 'RSS READER'
 # Version of application
-app_version = '0.06'
+app_version = '0.07'
 
 class CmdParser:
     """
@@ -31,6 +32,8 @@ class CmdParser:
                             help="Outputs verbose status messages")
         parser.add_argument('--limit', action='store', type=int,
                             help="Limit news topics if this parameter provided")
+        parser.add_argument('--date', action='store', type=int,
+                            help="Date in %Y%m%d format for printing news topics from the cache")
         parser.add_argument('source', nargs='?', action='store', type=str,
                             help="RSS URL")
 
@@ -179,6 +182,61 @@ class RssFeed:
             self.error_source()
         status = 'pass'
         return status
+
+
+    def config_file_test(self):
+        """
+        Method for open config file or create it if file when doesn't exist.
+        """
+        try:
+            config = open("rss_reader.cfg", "a+")
+            config.close()
+            return config
+        except:
+            print("RSS READER: error: config file rss_reader.cfg can't be created!")
+            raise SystemExit(0)
+
+
+    def config_file_rewrite(self):
+        """
+        Method for rewrite config file.
+        """
+        try:
+            config = open("rss_reader.cfg", "w")
+            config.close()
+            return config
+        except:
+            print("RSS READER: error: config file rss_reader.cfg can't be created!")
+            raise SystemExit(0)
+
+    def config_parser(self):
+        """
+        Method for parsing config file rss_reader.cfg
+        """
+        self.config_file_test()
+        config = configparser.ConfigParser()
+        try:
+            config.read("rss_reader.cfg")
+        except:
+            self.config_file_rewrite()
+            config.read("rss_reader.cfg")
+
+        if 'paths' in config:
+            try:
+                cache_path = config['paths']['cache_path']
+            except:
+                print("RSS READER: error: config file. Variable cache_path doesn't exist.")
+                raise SystemExit(0)
+            return cache_path
+        else:
+            config.add_section('paths')
+            config['paths']['cache_path'] = 'cache_feed'
+            with open('rss_reader.cfg', 'w') as configfile:
+                config.write(configfile)
+            cache_path = config['paths']['cache_path']
+            return cache_path
+
+
 
     def print_json(self):
         """

@@ -1,11 +1,12 @@
 import feedparser
 import argparse
 import configparser
+import requests
 
 # Name of application
 app_name = 'RSS READER'
 # Version of application
-app_version = '0.07'
+app_version = '0.08'
 
 class CmdParser:
     """
@@ -88,12 +89,25 @@ class RssFeed:
         self.s_link = s_link
         self.limit = limit
 
+
     def parce(self):
         """
         Method for parse rss feed with
         feedparser lib
         """
-        return feedparser.parse(self.s_link)
+        parse_feed = feedparser.parse(self.s_link)
+        return parse_feed
+
+    def parce_cache(self):
+        """
+        Method for parse rss feed with
+        feedparser lib
+        """
+        self.cache_file_write()
+        cache_file = self.config_parser()
+        parse_feed = feedparser.parse(cache_file)
+        return parse_feed
+
 
     def error_msg(self, name, verbose):
         """
@@ -165,12 +179,44 @@ class RssFeed:
         status = 'pass'
         return status
 
-    def print_info(self, verbose):
+    def cache_file_test(self):
+        """
+        Method for open cache file or create it if file when doesn't exist.
+        """
+        try:
+            cache_path = self.config_parser()
+            cache = open(cache_path, "a+")
+            cache.close()
+            return cache
+        except:
+            print("RSS READER: error: cache file", cache_path, "can't be created!")
+            raise SystemExit(0)
+
+
+    def cache_file_write(self):
+        """
+        Method for write news feed to cache file.
+        """
+        self.cache_file_test()
+        response = requests.get(self.s_link)
+        cache_file = open(self.config_parser(), 'a+b')
+        if response.content not in cache_file.read():
+            cache_file.write(response.content)
+        else:
+            pass
+        cache_file.close()
+
+
+    def print_info(self, verbose, date=0):
         """
         Method for print all(or some number with limit)
         news from rss feed
         """
-        feed = self.parce()
+        if date == 0:
+            feed = self.parce()
+        else:
+            feed = self.parce_cache()
+
         if len(feed.entries) > 0:
             for item in feed.entries[:self.limit]:
                 self.news_source(item, verbose)
@@ -178,6 +224,24 @@ class RssFeed:
                 self.news_date(item, verbose)
                 self.news_link(item, verbose)
                 self.space()
+        else:
+            self.error_source()
+        status = 'pass'
+        return status
+
+
+    def print_json(self, date=0):
+        """
+        Method for print all(or some number with limit)
+        news from rss feed in json format
+        """
+        if date == 0:
+            feed = self.parce()
+        else:
+            feed = self.parce_cache()
+
+        if len(feed.entries) > 0:
+            print(feed.entries[:self.limit])
         else:
             self.error_source()
         status = 'pass'
@@ -209,6 +273,7 @@ class RssFeed:
             print("RSS READER: error: config file rss_reader.cfg can't be created!")
             raise SystemExit(0)
 
+
     def config_parser(self):
         """
         Method for parsing config file rss_reader.cfg
@@ -237,21 +302,6 @@ class RssFeed:
             return cache_path
 
 
-
-    def print_json(self):
-        """
-        Method for print all(or some number with limit)
-        news from rss feed in json format
-        """
-        feed = self.parce()
-        if len(feed.entries) > 0:
-            print(feed.entries[:self.limit])
-        else:
-            self.error_source()
-        status = 'pass'
-        return status
-
-
 def start():
     """
     Main function for start and work rss reader
@@ -268,3 +318,7 @@ def start():
             news.print_info(verbose)
     else:
         news.print_json()
+
+
+
+

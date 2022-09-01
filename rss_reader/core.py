@@ -2,11 +2,12 @@ import feedparser
 import argparse
 import configparser
 import requests
+import datetime
 
 # Name of application
 app_name = 'RSS READER'
 # Version of application
-app_version = '0.09'
+app_version = '0.10'
 
 class CmdParser:
     """
@@ -33,8 +34,8 @@ class CmdParser:
                             help="Outputs verbose status messages")
         parser.add_argument('--limit', action='store', type=int,
                             help="Limit news topics if this parameter provided")
-        parser.add_argument('--date', action='store', type=int,
-                            help="Date in %Y%m%d format for printing news topics from the cache")
+        parser.add_argument('--date', action='store', type=lambda s: datetime.datetime.strptime(s, '%Y%m%d'),
+                            help="Date in YYYYMMDD format for printing news topics from the cache")
         parser.add_argument('source', nargs='?', action='store', type=str,
                             help="RSS URL")
 
@@ -72,11 +73,24 @@ class CmdParser:
         """
         output = self.input_parser()
         if output.source == None:
-            err_text = "RSS READER: error: the following arguments are required: source"
-            print(err_text)
-            raise SystemExit(0)
+            if self.date() == None:
+                err_text = "RSS READER: error: the following arguments are required: source"
+                print(err_text)
+                raise SystemExit(0)
         else:
             return output.source
+
+    def date(self):
+        """
+        Method for return cmd arg --date value
+        """
+        output = self.input_parser()
+        if output.date != None:
+            date = str(output.date)
+            sdate = date.split(" ")
+            return str(sdate[0])
+        else:
+            return 0
 
 
 class RssFeed:
@@ -103,7 +117,14 @@ class RssFeed:
         Method for parse rss feed with
         feedparser lib
         """
-        self.cache_file_write()
+        try:
+            self.cache_file_write()
+        except:
+            if self.s_link != None:
+                print("RSS READER: warning: can't connect to RSS source")
+            else:
+                print("RSS READER: use --help")
+                raise SystemExit(0)
         cache_file = self.config_parser()
         parse_feed = feedparser.parse(cache_file)
         return parse_feed
@@ -210,47 +231,79 @@ class RssFeed:
         """
         Method for return source url without https:// and sublinks
         """
-        url = str(self.s_link)
-        surl = url.split("/")
-        return surl[2]
+        if self.s_link != None:
+            url = str(self.s_link)
+            surl = url.split("/")
+            return surl[2]
+        else:
+            return None
 
-    def print_info(self, verbose, date=0):
+    def print_item_cmd(self, item, verbose):
+        """
+        Method for print items of RSS feed in cmd output.
+        """
+        self.news_source(item, verbose)
+        self.news_title(item, verbose)
+        self.news_date(item, verbose)
+        self.news_link(item, verbose)
+        self.space()
+
+    def print_info(self, verbose, date=0, source=None):
         """
         Method for print all(or some number with limit)
         news from rss feed
         """
-        if date == 0:
-            feed = self.parce()
+        if source != None:
+            if date == 0:
+                feed = self.parce()
+            else:
+                feed = self.parce_cache()
         else:
             feed = self.parce_cache()
         if len(feed.entries) > 0:
             for item in feed.entries[:self.limit]:
-                if self.split_url() in str(item.link):
-                    self.news_source(item, verbose)
-                    self.news_title(item, verbose)
-                    self.news_date(item, verbose)
-                    self.news_link(item, verbose)
-                    self.space()
+                if self.split_url() != None:
+                    if self.split_url() in str(item.link):
+                        if date != 0:
+                            if str(date) in item.published:
+                                self.print_item_cmd(item, verbose)
+                        else:
+                            self.print_item_cmd(item, verbose)
+                else:
+                    if date != 0:
+                        if str(date) in item.published:
+                            self.print_item_cmd(item, verbose)
         else:
             self.error_source()
         status = 'pass'
         return status
 
 
-    def print_json(self, date=0):
+    def print_json(self, date=0, source=None):
         """
         Method for print all(or some number with limit)
         news from rss feed in json format
         """
-        if date == 0:
-            feed = self.parce()
+        if source != None:
+            if date == 0:
+                feed = self.parce()
+            else:
+                feed = self.parce_cache()
         else:
             feed = self.parce_cache()
-
         if len(feed.entries) > 0:
             for item in feed.entries[:self.limit]:
-                if self.split_url() in str(item):
-                    print(item)
+                if self.split_url() != None:
+                    if self.split_url() in str(item):
+                        if date != 0:
+                            if str(date) in str(item):
+                                print(item)
+                        else:
+                            print(item)
+                else:
+                    if date != 0:
+                        if str(date) in str(item):
+                            print(item)
         else:
             self.error_source()
         status = 'pass'
@@ -318,16 +371,17 @@ def start():
 
     cmd_args = CmdParser()
     news = RssFeed(cmd_args.source(), cmd_args.limit())
+    date = cmd_args.date()
+    source = cmd_args.source()
     if cmd_args.json() != True:
         if cmd_args.verbose() == True:
             verbose = True
-            news.print_info(verbose)
+            news.print_info(verbose, date, source)
         else:
             verbose = False
-            news.print_info(verbose)
+            news.print_info(verbose, date, source)
     else:
-        news.print_json()
-    news.split_url()
+        news.print_json(date, source)
 
 
 

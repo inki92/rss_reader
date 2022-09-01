@@ -6,7 +6,7 @@ import requests
 # Name of application
 app_name = 'RSS READER'
 # Version of application
-app_version = '0.08'
+app_version = '0.09'
 
 class CmdParser:
     """
@@ -206,6 +206,13 @@ class RssFeed:
             pass
         cache_file.close()
 
+    def split_url(self):
+        """
+        Method for return source url without https:// and sublinks
+        """
+        url = str(self.s_link)
+        surl = url.split("/")
+        return surl[2]
 
     def print_info(self, verbose, date=0):
         """
@@ -216,14 +223,14 @@ class RssFeed:
             feed = self.parce()
         else:
             feed = self.parce_cache()
-
         if len(feed.entries) > 0:
             for item in feed.entries[:self.limit]:
-                self.news_source(item, verbose)
-                self.news_title(item, verbose)
-                self.news_date(item, verbose)
-                self.news_link(item, verbose)
-                self.space()
+                if self.split_url() in str(item.link):
+                    self.news_source(item, verbose)
+                    self.news_title(item, verbose)
+                    self.news_date(item, verbose)
+                    self.news_link(item, verbose)
+                    self.space()
         else:
             self.error_source()
         status = 'pass'
@@ -241,7 +248,9 @@ class RssFeed:
             feed = self.parce_cache()
 
         if len(feed.entries) > 0:
-            print(feed.entries[:self.limit])
+            for item in feed.entries[:self.limit]:
+                if self.split_url() in str(item):
+                    print(item)
         else:
             self.error_source()
         status = 'pass'
@@ -318,6 +327,7 @@ def start():
             news.print_info(verbose)
     else:
         news.print_json()
+    news.split_url()
 
 
 

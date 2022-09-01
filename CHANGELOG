@@ -9,3 +9,4 @@ CHANGELOG
 30.05.22 v.0.06 feat: Add verbose function
 1.09.22  v.0.07 feat: Add methods for open and parsing config files.
 1.09.22  v.0.08 feat: Add methods for download and parsing cache news feed.
+1.09.22  v.0.09 feat: Add fixes for grep feed by source. Add split_url method.

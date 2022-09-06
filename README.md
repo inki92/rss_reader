@@ -36,3 +36,4 @@ For build package from source code:
     --verbose      Outputs verbose status messages
     --limit LIMIT  Limit news topics if this parameter provided
     --date DATE    Date in YYYYMMDD format for printing news topics from the cache
+    --to-html      TO_HTML  Path and name of saved html file with rss feed

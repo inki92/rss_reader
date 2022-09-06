@@ -150,6 +150,7 @@ class RssFeed:
         feedparser lib
         """
         parse_feed = feedparser.parse(self.s_link)
+        self.cache_file_write()
         return parse_feed
 
     def parce_cache(self):

@@ -4,11 +4,13 @@ import configparser
 import requests
 import datetime
 from bs4 import BeautifulSoup as bs
+import os
+from pyhtml2pdf import converter
 
 # Name of application
 app_name = 'RSS READER'
 # Version of application
-app_version = '0.11'
+app_version = '0.12'
 
 class CmdParser:
     """
@@ -39,6 +41,8 @@ class CmdParser:
                             help="Date in YYYYMMDD format for printing news topics from the cache")
         parser.add_argument('--to-html', action='store', type=str,
                             help="Path and name of saved html file with rss feed")
+        parser.add_argument('--to-pdf', action='store', type=str,
+                            help="Path and name of saved pdf file with rss feed")
         parser.add_argument('source', nargs='?', action='store', type=str,
                             help="RSS URL")
 
@@ -107,12 +111,24 @@ class CmdParser:
         else:
             return 0
 
+    def to_pdf(self):
+        """
+        Method for return cmd arg --to-pdf value
+        """
+        output = self.input_parser()
+        if output.to_pdf != None:
+            self.check_path(output.to_pdf)
+            path = str(output.to_pdf)
+            return str(path)
+        else:
+            return 0
+
     def check_path(self, path):
         try:
             f = open(path, 'w')
             f.close()
         except:
-            err_text = "RSS READER: error: --to-html received incorrect path"
+            err_text = "RSS READER: error: output file path received incorrect path"
             print(err_text)
             raise SystemExit(0)
 
@@ -435,6 +451,20 @@ class RssFeed:
         f.write(bs(info, 'lxml').prettify())
         f.close()
 
+    def convert_to_pdf(self, input_html, output_path):
+        """
+        Method for create pdf output from RSS feed
+        """
+        path = os.path.abspath(input_html)
+        converter.convert(f'file:///{path}', output_path)
+
+    def remove_tmp(self, tmp_file):
+        """
+        Method for remove tmp files
+        """
+        os.remove(tmp_file)
+
+
 
 
 
@@ -449,21 +479,44 @@ def start():
     date = cmd_args.date()
     source = cmd_args.source()
     file = cmd_args.to_html()
+    pdf = cmd_args.to_pdf()
+
     if cmd_args.json() != True:
         if cmd_args.verbose() == True:
             verbose = True
-            news.print_info(verbose, date, source, file)
+            if pdf == 0:
+                news.print_info(verbose, date, source, file)
+            else:
+                news.print_info(verbose, date, source, 'tmp.html')
+                news.convert_to_pdf('tmp.html', pdf)
+                news.remove_tmp('tmp.html')
+
         else:
             verbose = False
-            news.print_info(verbose, date, source, file)
+            if pdf == 0:
+                news.print_info(verbose, date, source, file)
+            else:
+                news.print_info(verbose, date, source, 'tmp.html')
+                news.convert_to_pdf('tmp.html', pdf)
+                news.remove_tmp('tmp.html')
     else:
         news.print_json(date, source)
         if cmd_args.verbose() == True:
             verbose = True
-            news.print_info(verbose, date, source, file)
+            if pdf == 0:
+                news.print_info(verbose, date, source, file)
+            else:
+                news.print_info(verbose, date, source, 'tmp.html')
+                news.convert_to_pdf('tmp.html', pdf)
+                news.remove_tmp('tmp.html')
         else:
             verbose = False
-            news.print_info(verbose, date, source, file)
+            if pdf == 0:
+                news.print_info(verbose, date, source, file)
+            else:
+                news.print_info(verbose, date, source, 'tmp.html')
+                news.convert_to_pdf('tmp.html', pdf)
+                news.remove_tmp('tmp.html')
 
 
 

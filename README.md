@@ -27,13 +27,14 @@ For build package from source code:
     usage: RSS READER [-h] [-v] [--json] [--verbose] [--limit LIMIT] [--date DATE] [source]
     
     positional arguments:
-      source         RSS URL
+      source            RSS URL
     
     options:
-    -h, --help     show this help message and exit
-    -v, --version  Print version info
-    --json         Print result as JSON in stdout
-    --verbose      Outputs verbose status messages
-    --limit LIMIT  Limit news topics if this parameter provided
-    --date DATE    Date in YYYYMMDD format for printing news topics from the cache
-    --to-html      TO_HTML  Path and name of saved html file with rss feed
+    -h, --help          show this help message and exit
+    -v, --version       Print version info
+    --json              Print result as JSON in stdout
+    --verbose           Outputs verbose status messages
+    --limit LIMIT       Limit news topics if this parameter provided
+    --date DATE         Date in YYYYMMDD format for printing news topics from the cache
+    --to-html TO_HTML   Path and name of saved html file with rss feed
+    --to-pdf TO_PDF     Path and name of saved pdf file with rss feed

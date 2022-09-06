@@ -183,64 +183,69 @@ class RssFeed:
         status = 'pass'
         return status
 
-    def news_source(self, item, verbose, file=0):
+    def news_source(self, item, verbose, file=0, json=False):
         """
         Method for print source of news from rss feed
         """
         try:
             message = "Source: " + item.source.title
             if file == 0:
-                print(message)
+                if json != True:
+                    print(message)
             return item.source.title
         except:
             self.error_msg('source', verbose)
             return None
 
-    def news_title(self, item, verbose, file=0):
+    def news_title(self, item, verbose, file=0, json=False):
         """
         Method for print title of news from rss feed
         """
         try:
             message = "Title: " + item.title
             if file == 0:
-                print(message)
+                if json != True:
+                    print(message)
             return item.title
         except:
             self.error_msg('title', verbose)
             return None
 
-    def news_date(self, item, verbose, file=0):
+    def news_date(self, item, verbose, file=0, json=False):
         """
         Method for print publish date of news from rss feed
         """
         try:
             message = "Date: " + item.published
             if file == 0:
-                print(message)
+                if json != True:
+                    print(message)
             return item.published
         except:
             self.error_msg('date', verbose)
             return None
 
-    def news_link(self, item, verbose, file=0):
+    def news_link(self, item, verbose, file=0, json=False):
         """
         Method for print link to news from rss feed
         """
         try:
             message = "Link:" + item.link
             if file == 0:
-                print(message)
+                if json != True:
+                    print(message)
             return item.link
         except:
             self.error_msg('link', verbose)
             return None
 
-    def space(self):
+    def space(self, file=0):
         """
         Method for print space
         """
         message = "   "
-        print(message)
+        if file == 0:
+            print(message)
         status = 'pass'
         return status
 
@@ -294,19 +299,19 @@ class RssFeed:
         else:
             return None
 
-    def print_item_cmd(self, item, verbose, file=0):
+    def print_item_cmd(self, item, verbose, file=0, json=False):
         """
         Method for print items of RSS feed in cmd output.
         """
-        src = self.news_source(item, verbose, file)
-        title = self.news_title(item, verbose, file)
-        pub_date = self.news_date(item, verbose, file)
-        link = self.news_link(item, verbose, file)
-        self.space()
+        src = self.news_source(item, verbose, file, json)
+        title = self.news_title(item, verbose, file, json)
+        pub_date = self.news_date(item, verbose, file, json)
+        link = self.news_link(item, verbose, file, json)
+        self.space(file)
         html = self.rss2html(src, title, pub_date, link)
         return html
 
-    def print_info(self, verbose, date=0, source=None, file=0):
+    def print_info(self, verbose, date=0, source=None, file=0, json=False):
         """
         Method for print all(or some number with limit)
         news from rss feed
@@ -325,17 +330,17 @@ class RssFeed:
                     if self.split_url() in str(item.link):
                         if date != 0:
                             if str(date) in item.published:
-                                x = self.print_item_cmd(item, verbose, file)
+                                x = self.print_item_cmd(item, verbose, file, json)
                                 if file != 0:
                                     html_str += str(x)
                         else:
-                            x = self.print_item_cmd(item, verbose, file)
+                            x = self.print_item_cmd(item, verbose, file, json)
                             if file != 0:
                                 html_str += str(x)
                 else:
                     if date != 0:
                         if str(date) in item.published:
-                            x = self.print_item_cmd(item, verbose, file)
+                            x = self.print_item_cmd(item, verbose, file, json)
                             if file != 0:
                                 html_str += str(x)
         else:
@@ -483,39 +488,41 @@ def start():
     pdf = cmd_args.to_pdf()
 
     if cmd_args.json() != True:
+        json = False
         if cmd_args.verbose() == True:
             verbose = True
             if pdf == 0:
-                news.print_info(verbose, date, source, file)
+                news.print_info(verbose, date, source, file, json)
             else:
-                news.print_info(verbose, date, source, 'tmp.html')
+                news.print_info(verbose, date, source, 'tmp.html', json)
                 news.convert_to_pdf('tmp.html', pdf)
                 news.remove_tmp('tmp.html')
 
         else:
             verbose = False
             if pdf == 0:
-                news.print_info(verbose, date, source, file)
+                news.print_info(verbose, date, source, file, json)
             else:
-                news.print_info(verbose, date, source, 'tmp.html')
+                news.print_info(verbose, date, source, 'tmp.html', json)
                 news.convert_to_pdf('tmp.html', pdf)
                 news.remove_tmp('tmp.html')
     else:
+        json = True
         news.print_json(date, source)
         if cmd_args.verbose() == True:
             verbose = True
             if pdf == 0:
-                news.print_info(verbose, date, source, file)
+                news.print_info(verbose, date, source, file, json)
             else:
-                news.print_info(verbose, date, source, 'tmp.html')
+                news.print_info(verbose, date, source, 'tmp.html', json)
                 news.convert_to_pdf('tmp.html', pdf)
                 news.remove_tmp('tmp.html')
         else:
             verbose = False
             if pdf == 0:
-                news.print_info(verbose, date, source, file)
+                news.print_info(verbose, date, source, file, json)
             else:
-                news.print_info(verbose, date, source, 'tmp.html')
+                news.print_info(verbose, date, source, 'tmp.html', json)
                 news.convert_to_pdf('tmp.html', pdf)
                 news.remove_tmp('tmp.html')
 

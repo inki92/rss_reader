@@ -11,3 +11,4 @@ CHANGELOG
 1.09.22  v.0.08 feat: Add methods for download and parsing cache news feed.
 1.09.22  v.0.09 feat: Add fixes for grep feed by source. Add split_url method.
 1.09.22  v.0.10 feat: Add function for read RSS feed from cache. Add filter for caching news by date.
+6.09.22  v.0.11 feat: Add --to-html function for save RSS feed to html file. fix: Add exception to cache_file_write for working without internet.

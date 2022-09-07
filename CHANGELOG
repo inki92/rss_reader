@@ -1,17 +1,19 @@
 CHANGELOG
-19.08.22 v.0.01 Add doc strings. Create start function.
-19.08.22 v.0.02 Add error_source method of rss_feed class. Add requirements.txt.
-22.08.22 v.0.03 fix: Add None value bypass for source method value in cmd_parser.
-                 Add error_msg method. Add exceptions for absence keys.
-         v.0.04 fix: Add special statuses.
+
+19.08.22 v.0.01       Add doc strings. Create start function.
+19.08.22 v.0.02       Add error_source method of rss_feed class. Add requirements.txt.
+22.08.22 v.0.03 fix:  Add None value bypass for source method value in cmd_parser.
+                      Add error_msg method. Add exceptions for absence keys.
+         v.0.04 fix:  Add special statuses.
 26.05.22 v.0.05 feat: Restruct app to python package.
-                doc: Add CHANGELOG and README.md
+                doc:  Add CHANGELOG and README.md
 30.05.22 v.0.06 feat: Add verbose function
-1.09.22  v.0.07 feat: Add methods for open and parsing config files.
-1.09.22  v.0.08 feat: Add methods for download and parsing cache news feed.
-1.09.22  v.0.09 feat: Add fixes for grep feed by source. Add split_url method.
-1.09.22  v.0.10 feat: Add function for read RSS feed from cache. Add filter for caching news by date.
-6.09.22  v.0.11 feat: Add --to-html function for save RSS feed to html file. fix: Add exception to cache_file_write for working without internet.
-6.09.22  v.0.12 feat: Add --to-pdf function for save RSS feed to pdf file. fix: Add requirements to setup.py.
-                fix: Add cache_file_write() to parce method for caching.
-                fix: add excepting for print in std_out when json option is True
+01.09.22 v.0.07 feat: Add methods for open and parsing config files.
+01.09.22 v.0.08 feat: Add methods for download and parsing cache news feed.
+01.09.22 v.0.09 feat: Add fixes for grep feed by source. Add split_url method.
+01.09.22 v.0.10 feat: Add function for read RSS feed from cache. Add filter for caching news by date.
+06.09.22 v.0.11 feat: Add --to-html function for save RSS feed to html file. fix: Add exception to cache_file_write for working without internet.
+06.09.22 v.0.12 feat: Add --to-pdf function for save RSS feed to pdf file. fix: Add requirements to setup.py.
+                fix:  Add cache_file_write() to parce method for caching.
+                fix:  Add excepting for print in std_out when json option is True
+07.09.22 v.0.12 fix:  Add create_pdf() function to main start()

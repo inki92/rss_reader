@@ -470,11 +470,6 @@ class RssFeed:
         """
         os.remove(tmp_file)
 
-
-
-
-
-
 def start():
     """
     Main function for start and work rss reader
@@ -487,6 +482,14 @@ def start():
     file = cmd_args.to_html()
     pdf = cmd_args.to_pdf()
 
+    def create_pdf():
+        """
+        Function for create pdf file from tmp html
+        """
+        news.print_info(verbose, date, source, 'tmp.html', json)
+        news.convert_to_pdf('tmp.html', pdf)
+        news.remove_tmp('tmp.html')
+
     if cmd_args.json() != True:
         json = False
         if cmd_args.verbose() == True:
@@ -494,18 +497,13 @@ def start():
             if pdf == 0:
                 news.print_info(verbose, date, source, file, json)
             else:
-                news.print_info(verbose, date, source, 'tmp.html', json)
-                news.convert_to_pdf('tmp.html', pdf)
-                news.remove_tmp('tmp.html')
-
+                create_pdf()
         else:
             verbose = False
             if pdf == 0:
                 news.print_info(verbose, date, source, file, json)
             else:
-                news.print_info(verbose, date, source, 'tmp.html', json)
-                news.convert_to_pdf('tmp.html', pdf)
-                news.remove_tmp('tmp.html')
+                create_pdf()
     else:
         json = True
         news.print_json(date, source)
@@ -514,17 +512,15 @@ def start():
             if pdf == 0:
                 news.print_info(verbose, date, source, file, json)
             else:
-                news.print_info(verbose, date, source, 'tmp.html', json)
-                news.convert_to_pdf('tmp.html', pdf)
-                news.remove_tmp('tmp.html')
+                create_pdf()
         else:
             verbose = False
             if pdf == 0:
                 news.print_info(verbose, date, source, file, json)
             else:
-                news.print_info(verbose, date, source, 'tmp.html', json)
-                news.convert_to_pdf('tmp.html', pdf)
-                news.remove_tmp('tmp.html')
+                create_pdf()
+
+
 
 
 

@@ -1,38 +1,102 @@
-import pytest
-import rss_reader
+from rss_reader.core import CmdParser
 
-def test_cmd_parser_json():
+test_obj = CmdParser()
+
+# Default values
+json = True
+verbose = True
+limit = 1
+date = 20220202
+to_html = True
+to_pdf = True
+source = 'test'
+
+
+class MockInputParser:
+
+    def __init__(self, json, verbose, limit, date, to_html, to_pdf, source):
+        self.json = json
+        self.verbose = verbose
+        self.limit = limit
+        self.date = date
+        self.to_html = to_html
+        self.to_pdf = to_pdf
+        self.source = source
+
+
+def test_cmd_parser_json(mocker):
     """
-    Test for json method(empty)
+    Test for json method(True)
     """
-    test_cmd = rss_reader.cmd_parser()
-    assert test_cmd.json() == False
+    mock_now = mocker.patch("rss_reader.core.CmdParser.input_parser")
+    mock_now.return_value = MockInputParser(json, verbose, limit, date, to_html, to_pdf, source)
+    test_cmd = test_obj.json()
+    assert test_cmd is True
 
-def test_cmd_parser_verbose():
+
+def test_cmd_parser_verbose(mocker):
     """
-    Test for verbose method(empty)
+    Test for verbose method(True)
     """
-    test_cmd = rss_reader.cmd_parser()
-    assert test_cmd.verbose() == False
+    mock_now = mocker.patch("rss_reader.core.CmdParser.input_parser")
+    mock_now.return_value = MockInputParser(json, verbose, limit, date, to_html, to_pdf, source)
+    test_cmd = test_obj.verbose()
+    assert test_cmd is True
 
-def test_cmd_parser_limit():
+
+def test_limit(mocker):
     """
-    Test for parser_limit method(empty)
+    Test for parser_limit method(must be 1, like in defaults)
     """
-    test_cmd = rss_reader.cmd_parser()
-    assert test_cmd.limit() == None
+    mock_now = mocker.patch("rss_reader.core.CmdParser.input_parser")
+    mock_now.return_value = MockInputParser(json, verbose, limit, date, to_html, to_pdf, source)
+    test_cmd = test_obj.limit()
+    assert test_cmd == 1
 
-def test_cmd_parser_source():
+
+def test_source(mocker):
     """
-    Test for source method(when empty - SystemExit)
+    Test for source method(must be 'test')
     """
-    test_cmd = rss_reader.cmd_parser()
-    with pytest.raises(SystemExit) as e:
-        test_cmd.source()
-    assert e.type == SystemExit
-    assert e.value.code == 0
+    mock_now = mocker.patch("rss_reader.core.CmdParser.input_parser")
+    mock_now.return_value = MockInputParser(json, verbose, limit, date, to_html, to_pdf, source)
+    test_cmd = test_obj.source()
+    assert test_cmd == 'test'
 
 
+def test_date(mocker):
+    """
+    Test for date method(must be '20220202')
+    """
+    mock_now = mocker.patch("rss_reader.core.CmdParser.input_parser")
+    mock_now.return_value = MockInputParser(json, verbose, limit, date, to_html, to_pdf, source)
+    test_cmd = test_obj.date()
+    assert test_cmd == '20220202'
 
 
+def test_to_html(mocker):
+    """
+    Test for to_html method(must be 'True')
+    """
+    mock_now = mocker.patch("rss_reader.core.CmdParser.input_parser")
+    mock_now.return_value = MockInputParser(json, verbose, limit, date, to_html, to_pdf, source)
+    test_cmd = test_obj.to_html()
+    assert test_cmd == 'True'
 
+
+def test_to_pdf(mocker):
+    """
+    Test for to_pdf method(must be 'True')
+    """
+    mock_now = mocker.patch("rss_reader.core.CmdParser.input_parser")
+    mock_now.return_value = MockInputParser(json, verbose, limit, date, to_html, to_pdf, source)
+    test_cmd = test_obj.to_pdf()
+    assert test_cmd == 'True'
+
+
+def test_check_path():
+    """
+    Test for source method(must be None)
+    """
+    test_cmd = test_obj.check_path('test_file')
+    assert test_cmd is None

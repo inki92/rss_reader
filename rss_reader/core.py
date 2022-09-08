@@ -10,7 +10,8 @@ from pyhtml2pdf import converter
 # Name of application
 app_name = 'RSS READER'
 # Version of application
-app_version = '0.12'
+app_version = '0.13'
+
 
 class CmdParser:
     """
@@ -21,7 +22,8 @@ class CmdParser:
     def __init__(self):
         pass
 
-    def input_parser(self):
+    @staticmethod
+    def input_parser():
         """
         Method for parse arguments in cmd user input
         """
@@ -79,8 +81,8 @@ class CmdParser:
         (link to rss feed)
         """
         output = self.input_parser()
-        if output.source == None:
-            if self.date() == None:
+        if output.source is None:
+            if self.date() is None:
                 err_text = "RSS READER: error: the following arguments are required: source"
                 print(err_text)
                 raise SystemExit(0)
@@ -92,7 +94,7 @@ class CmdParser:
         Method for return cmd arg --date value
         """
         output = self.input_parser()
-        if output.date != None:
+        if output.date is not None:
             date = str(output.date)
             sdate = date.split(" ")
             return str(sdate[0])
@@ -104,7 +106,7 @@ class CmdParser:
         Method for return cmd arg --to-html value
         """
         output = self.input_parser()
-        if output.to_html != None:
+        if output.to_html is not None:
             self.check_path(output.to_html)
             path = str(output.to_html)
             return str(path)
@@ -116,14 +118,15 @@ class CmdParser:
         Method for return cmd arg --to-pdf value
         """
         output = self.input_parser()
-        if output.to_pdf != None:
+        if output.to_pdf is not None:
             self.check_path(output.to_pdf)
             path = str(output.to_pdf)
             return str(path)
         else:
             return 0
 
-    def check_path(self, path):
+    @staticmethod
+    def check_path(path):
         try:
             f = open(path, 'w')
             f.close()
@@ -143,7 +146,6 @@ class RssFeed:
         self.s_link = s_link
         self.limit = limit
 
-
     def parce(self):
         """
         Method for parse rss feed with
@@ -161,7 +163,7 @@ class RssFeed:
         try:
             self.cache_file_write()
         except:
-            if self.s_link != None:
+            if self.s_link is not None:
                 print("RSS READER: warning: can't connect to RSS source")
             else:
                 print("RSS READER: use --help")
@@ -170,8 +172,8 @@ class RssFeed:
         parse_feed = feedparser.parse(cache_file)
         return parse_feed
 
-
-    def error_msg(self, name, verbose):
+    @staticmethod
+    def error_msg(name, verbose):
         """
         Methode for print error message about absence key in feed
         """
@@ -190,7 +192,7 @@ class RssFeed:
         try:
             message = "Source: " + item.source.title
             if file == 0:
-                if json != True:
+                if json is not True:
                     print(message)
             return item.source.title
         except:
@@ -204,7 +206,7 @@ class RssFeed:
         try:
             message = "Title: " + item.title
             if file == 0:
-                if json != True:
+                if json is not True:
                     print(message)
             return item.title
         except:
@@ -218,7 +220,7 @@ class RssFeed:
         try:
             message = "Date: " + item.published
             if file == 0:
-                if json != True:
+                if json is not True:
                     print(message)
             return item.published
         except:
@@ -232,24 +234,27 @@ class RssFeed:
         try:
             message = "Link:" + item.link
             if file == 0:
-                if json != True:
+                if json is not True:
                     print(message)
             return item.link
         except:
             self.error_msg('link', verbose)
             return None
 
-    def space(self, file=0):
+    @staticmethod
+    def space(file=0, json=False):
         """
         Method for print space
         """
         message = "   "
-        if file == 0:
-            print(message)
+        if json is False:
+            if file == 0:
+                print(message)
         status = 'pass'
         return status
 
-    def error_source(self):
+    @staticmethod
+    def error_source():
         """
         Method for print user visible message about source error
         """
@@ -271,7 +276,6 @@ class RssFeed:
             print("RSS READER: error: cache file", cache_path, "can't be created!")
             raise SystemExit(0)
 
-
     def cache_file_write(self):
         """
         Method for write news feed to cache file.
@@ -292,7 +296,7 @@ class RssFeed:
         """
         Method for return source url without https:// and sublinks
         """
-        if self.s_link != None:
+        if self.s_link is not None:
             url = str(self.s_link)
             surl = url.split("/")
             return surl[2]
@@ -307,7 +311,7 @@ class RssFeed:
         title = self.news_title(item, verbose, file, json)
         pub_date = self.news_date(item, verbose, file, json)
         link = self.news_link(item, verbose, file, json)
-        self.space(file)
+        self.space(file, json)
         html = self.rss2html(src, title, pub_date, link)
         return html
 
@@ -317,7 +321,7 @@ class RssFeed:
         news from rss feed
         """
         html_str = ""
-        if source != None:
+        if source is not None:
             if date == 0:
                 feed = self.parce()
             else:
@@ -326,7 +330,7 @@ class RssFeed:
             feed = self.parce_cache()
         if len(feed.entries) > 0:
             for item in feed.entries[:self.limit]:
-                if self.split_url() != None:
+                if self.split_url() is not None:
                     if self.split_url() in str(item.link):
                         if date != 0:
                             if str(date) in item.published:
@@ -350,13 +354,12 @@ class RssFeed:
             self.print_html(html_str, file)
         return status
 
-
     def print_json(self, date=0, source=None):
         """
         Method for print all(or some number with limit)
         news from rss feed in json format
         """
-        if source != None:
+        if source is not None:
             if date == 0:
                 feed = self.parce()
             else:
@@ -365,7 +368,7 @@ class RssFeed:
             feed = self.parce_cache()
         if len(feed.entries) > 0:
             for item in feed.entries[:self.limit]:
-                if self.split_url() != None:
+                if self.split_url() is not None:
                     if self.split_url() in str(item):
                         if date != 0:
                             if str(date) in str(item):
@@ -381,8 +384,8 @@ class RssFeed:
         status = 'pass'
         return status
 
-
-    def config_file_test(self):
+    @staticmethod
+    def config_file_test():
         """
         Method for open config file or create it if file when doesn't exist.
         """
@@ -394,8 +397,8 @@ class RssFeed:
             print("RSS READER: error: config file rss_reader.cfg can't be created!")
             raise SystemExit(0)
 
-
-    def config_file_rewrite(self):
+    @staticmethod
+    def config_file_rewrite():
         """
         Method for rewrite config file.
         """
@@ -406,7 +409,6 @@ class RssFeed:
         except:
             print("RSS READER: error: config file rss_reader.cfg can't be created!")
             raise SystemExit(0)
-
 
     def config_parser(self):
         """
@@ -435,7 +437,8 @@ class RssFeed:
             cache_path = config['paths']['cache_path']
             return cache_path
 
-    def rss2html(self, src, title, pub_date, link):
+    @staticmethod
+    def rss2html(src, title, pub_date, link):
         """
         Format feed item to html
         """
@@ -449,7 +452,8 @@ class RssFeed:
         <br>"""
         return template.format(title=title, link=link, source=src, date=pub_date)
 
-    def print_html(self, info, path):
+    @staticmethod
+    def print_html(info, path):
         """
         Method for create html output from RSS feed
         """
@@ -457,18 +461,21 @@ class RssFeed:
         f.write(bs(info, 'lxml').prettify())
         f.close()
 
-    def convert_to_pdf(self, input_html, output_path):
+    @staticmethod
+    def convert_to_pdf(input_html, output_path):
         """
         Method for create pdf output from RSS feed
         """
         path = os.path.abspath(input_html)
         converter.convert(f'file:///{path}', output_path)
 
-    def remove_tmp(self, tmp_file):
+    @staticmethod
+    def remove_tmp(tmp_file):
         """
         Method for remove tmp files
         """
         os.remove(tmp_file)
+
 
 def start():
     """
@@ -486,13 +493,14 @@ def start():
         """
         Function for create pdf file from tmp html
         """
-        news.print_info(verbose, date, source, 'tmp.html', json)
+        tmp_file = 'tmp.html'
+        news.print_info(verbose, date, source, tmp_file, json)
         news.convert_to_pdf('tmp.html', pdf)
         news.remove_tmp('tmp.html')
 
-    if cmd_args.json() != True:
+    if cmd_args.json() is not True:
         json = False
-        if cmd_args.verbose() == True:
+        if cmd_args.verbose() is True:
             verbose = True
             if pdf == 0:
                 news.print_info(verbose, date, source, file, json)
@@ -507,7 +515,7 @@ def start():
     else:
         json = True
         news.print_json(date, source)
-        if cmd_args.verbose() == True:
+        if cmd_args.verbose() is True:
             verbose = True
             if pdf == 0:
                 news.print_info(verbose, date, source, file, json)
@@ -519,10 +527,3 @@ def start():
                 news.print_info(verbose, date, source, file, json)
             else:
                 create_pdf()
-
-
-
-
-
-
-

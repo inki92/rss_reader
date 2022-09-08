@@ -13,7 +13,9 @@ source = 'test'
 
 
 class MockInputParser:
-
+    """
+    Class for mocking input_parser method of CmdParser class
+    """
     def __init__(self, json, verbose, limit, date, to_html, to_pdf, source):
         self.json = json
         self.verbose = verbose

@@ -17,5 +17,6 @@ CHANGELOG
                 fix:  Add cache_file_write() to parce method for caching.
                 fix:  Add excepting for print in std_out when json option is True
 07.09.22 v.0.12 fix:  Add create_pdf() function to main start()
-08.09.22 v.0.13 feat: Add tests for classes.
+08.09.22 v.0.13 test: Add tests for classes.
                 ref:  Fix issues in code style.
+                test: Add tests for start() function

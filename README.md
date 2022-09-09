@@ -35,9 +35,13 @@ For install unpack archive with package and run:
     # python3 setup.py install
 
 # Tests
-For run tests before building package
+For run tests before building package (build tests):
 
-    # python setup.py test 
+    # python setup.py pytest
+
+For run pytest tests with coverage report before building package run in main directory:
+
+    # pytest --cov=rss_reader
 
 # Build 
 For build package from source code:

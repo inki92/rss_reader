@@ -32,6 +32,7 @@ After installation it will work without it, when you have interpreter in your sy
 # Installation
 For install unpack archive with package and run:
 
+    # python3 -m pip install setuptools
     # python3 setup.py install
 
 # Tests

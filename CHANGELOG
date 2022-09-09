@@ -22,3 +22,4 @@ CHANGELOG
                 test: Add tests for start() function
 09.09.22 v.0.14 docs: Add and edit doc strings for classes and methods. Edit README.md
                 docs: Add info about tests in README.md
+                ref:  Fix issues in code style.

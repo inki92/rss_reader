@@ -20,3 +20,4 @@ CHANGELOG
 08.09.22 v.0.13 test: Add tests for classes.
                 ref:  Fix issues in code style.
                 test: Add tests for start() function
+09.09.22 v.0.14 docs: Add and edit doc strings for classes and methods. Edit README.md

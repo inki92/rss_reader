@@ -10,7 +10,7 @@ from pyhtml2pdf import converter
 # Name of application
 app_name = 'RSS READER'
 # Version of application
-app_version = '0.13'
+app_version = '0.14'
 
 
 class CmdParser:
@@ -143,13 +143,18 @@ class RssFeed:
     """
 
     def __init__(self, s_link, limit):
+        """
+        s_link - link to rss feed
+        limit - int value with limit of output
+        """
         self.s_link = s_link
         self.limit = limit
 
     def parce(self):
         """
         Method for parse rss feed with
-        feedparser lib
+        feedparser lib, also this method
+        write feed to cache file
         """
         parse_feed = feedparser.parse(self.s_link)
         self.cache_file_write()
@@ -175,7 +180,9 @@ class RssFeed:
     @staticmethod
     def error_msg(name, verbose):
         """
-        Methode for print error message about absence key in feed
+        Methode for print error message about absence key in feed.
+        name - name of error value of rss feed;
+        verbose - value for show this error message or not.
         """
         if verbose:
             message = "RSS READER: error: the following key absence in RSS feed: " + name
@@ -187,7 +194,11 @@ class RssFeed:
 
     def news_source(self, item, verbose, file=0, json=False):
         """
-        Method for print source of news from rss feed
+        Method for print source of news from rss feed.
+        item - part of rss feed;
+        verbose - value for err_msg method;
+        file - value for create or not file output;
+        json - value for create or not json output.
         """
         try:
             message = "Source: " + item.source.title
@@ -201,7 +212,10 @@ class RssFeed:
 
     def news_title(self, item, verbose, file=0, json=False):
         """
-        Method for print title of news from rss feed
+        Method for print title of news from rss feed.
+        verbose - value for err_msg method;
+        file - value for create or not file output;
+        json - value for create or not json output.
         """
         try:
             message = "Title: " + item.title
@@ -215,7 +229,10 @@ class RssFeed:
 
     def news_date(self, item, verbose, file=0, json=False):
         """
-        Method for print publish date of news from rss feed
+        Method for print publish date of news from rss feed.
+        verbose - value for err_msg method;
+        file - value for create or not file output;
+        json - value for create or not json output.
         """
         try:
             message = "Date: " + item.published
@@ -229,7 +246,10 @@ class RssFeed:
 
     def news_link(self, item, verbose, file=0, json=False):
         """
-        Method for print link to news from rss feed
+        Method for print link to news from rss feed.
+        verbose - value for err_msg method;
+        file - value for create or not file output;
+        json - value for create or not json output.
         """
         try:
             message = "Link:" + item.link
@@ -244,7 +264,11 @@ class RssFeed:
     @staticmethod
     def space(file=0, json=False):
         """
-        Method for print space
+        Method for print space.
+        file - value for create or not file output
+            (if file != 0 - space not will be print);
+        json - value for create or not json output
+            (if json == True - space not will be print).
         """
         message = "   "
         if json is False:
@@ -256,7 +280,7 @@ class RssFeed:
     @staticmethod
     def error_source():
         """
-        Method for print user visible message about source error
+        Method for print user visible message about source error.
         """
         message = "RSS READER: error: reading RSS feed. Check the source."
         print(message)
@@ -294,7 +318,7 @@ class RssFeed:
 
     def split_url(self):
         """
-        Method for return source url without https:// and sublinks
+        Method for return source url without https:// and sublinks.
         """
         if self.s_link is not None:
             url = str(self.s_link)
@@ -306,6 +330,10 @@ class RssFeed:
     def print_item_cmd(self, item, verbose, file=0, json=False):
         """
         Method for print items of RSS feed in cmd output.
+        item - part of rss feed;
+        verbose - value for err_msg method;
+        file - value for create or not file output;
+        json - value for create or not json output.
         """
         src = self.news_source(item, verbose, file, json)
         title = self.news_title(item, verbose, file, json)
@@ -318,7 +346,15 @@ class RssFeed:
     def print_info(self, verbose, date=0, source=None, file=0, json=False):
         """
         Method for print all(or some number with limit)
-        news from rss feed
+        news from rss feed.
+        item - part of rss feed;
+        verbose - value for err_msg method;
+        date - value for finding news with date in cache,
+            if date=0 output will be from rss source via link;
+        source - value for the source link of rss feed,
+            if source=None output will be only from cache;
+        file - value for create or not file output;
+        json - value for create or not json output.
         """
         html_str = ""
         if source is not None:
@@ -357,7 +393,11 @@ class RssFeed:
     def print_json(self, date=0, source=None):
         """
         Method for print all(or some number with limit)
-        news from rss feed in json format
+        news from rss feed in json format.
+        date - value for finding news with date in cache,
+            if date=0 output will be from rss source via link;
+        source - value for the source link of rss feed,
+            if source=None output will be only from cache;
         """
         if source is not None:
             if date == 0:
@@ -412,7 +452,7 @@ class RssFeed:
 
     def config_parser(self):
         """
-        Method for parsing config file rss_reader.cfg
+        Method for parsing config file rss_reader.cfg.
         """
         self.config_file_test()
         config = configparser.ConfigParser()
@@ -440,7 +480,12 @@ class RssFeed:
     @staticmethod
     def rss2html(src, title, pub_date, link):
         """
-        Format feed item to html
+        Format rss feed item to html by template.
+        title - value with title of item from rss feed;
+        pub_date - value for finding news with date in cache,
+            if date=0 output will be from rss source via link;
+        link - value for the source link of rss feed,
+            if source=None output will be only from cache;
         """
         template = """\
         <h2 class='title'>{title}</h2>\
@@ -455,7 +500,9 @@ class RssFeed:
     @staticmethod
     def print_html(info, path):
         """
-        Method for create html output from RSS feed
+        Method for create html output from RSS feed.
+        info - rss feed after rss2html method;
+        path - path to html file by user.
         """
         f = open(path, 'w')
         f.write(bs(info, 'lxml').prettify())
@@ -464,7 +511,9 @@ class RssFeed:
     @staticmethod
     def convert_to_pdf(input_html, output_path):
         """
-        Method for create pdf output from RSS feed
+        Method for create pdf output from RSS feed.
+        input_html - input html file;
+        output_path - path and name for output pdf file.
         """
         path = os.path.abspath(input_html)
         converter.convert(f'file:///{path}', output_path)
@@ -472,14 +521,14 @@ class RssFeed:
     @staticmethod
     def remove_tmp(tmp_file):
         """
-        Method for remove tmp files
+        Method for remove tmp files.
         """
         os.remove(tmp_file)
 
 
 def start():
     """
-    Main function for start and work rss reader
+    Main function for start and work rss reader.
     """
 
     cmd_args = CmdParser()
@@ -491,7 +540,7 @@ def start():
 
     def create_pdf():
         """
-        Function for create pdf file from tmp html
+        Function for create pdf file from tmp html.
         """
         tmp_file = 'tmp.html'
         news.print_info(verbose, date, source, tmp_file, json)
